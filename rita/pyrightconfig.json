@@ -1,0 +1,15 @@
+{
+  "include": [
+    "edge/src",
+    "tests",
+    "rita_assistant.py"
+  ],
+  "executionEnvironments": [
+    {
+      "root": ".",
+      "extraPaths": [
+        "edge"
+      ]
+    }
+  ]
+}

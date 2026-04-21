@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+build/
+dist/
+
+# RITA Specific
+rita/edge/recordings/
+*.onnx
+*.onnx.json
+vosk-model-*/
+models/
+mqtt_buffer.jsonl
+*.log
+
+# Environments
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RITA - Asistente</title>
+<style>
+  :root {
+    --bg-color: #0f172a;
+    --face-color: #f1f5f9;
+    --eye-color: #0f172a;
+    --glow-color: #38bdf8;
+  }
+  
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    background: var(--bg-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+    overflow: hidden;
+    user-select: none;
+    color: white;
+    transition: background 0.8s ease;
+  }
+
+  .scene {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+  }
+
+  .avatar-container {
+    position: relative;
+    width: 260px;
+    height: 260px;
+  }
+
+  /* El cuerpo principal de la cara - orgánico */
+  .head {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: var(--face-color);
+    border-radius: 45% 55% 40% 60% / 55% 45% 60% 40%;
+    box-shadow: 
+      0 0 40px rgba(56, 189, 248, 0.2),
+      inset -10px -20px 30px rgba(0,0,0,0.1),
+      inset 10px 10px 20px rgba(255,255,255,0.8);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: organic-float 6s ease-in-out infinite, breathing 4s ease-in-out infinite;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+  }
+
+  @keyframes organic-float {
+    0%, 100% { border-radius: 45% 55% 40% 60% / 55% 45% 60% 40%; transform: translateX(0px) rotate(0deg); }
+    33% { border-radius: 55% 45% 60% 40% / 40% 60% 45% 55%; transform: translateX(20px) rotate(4deg); }
+    66% { border-radius: 40% 60% 50% 50% / 60% 40% 55% 45%; transform: translateX(-20px) rotate(-4deg); }
+  }
+
+  @keyframes breathing {
+    0%, 100% { transform: scale(1) translateY(0); }
+    50% { transform: scale(1.02) translateY(-5px); }
+  }
+
+  .glow {
+    position: absolute;
+    width: 120%;
+    height: 120%;
+    top: -10%;
+    left: -10%;
+    background: radial-gradient(circle, var(--glow-color) 0%, transparent 60%);
+    opacity: 0.15;
+    z-index: 1;
+    border-radius: 50%;
+    animation: pulse 3s ease-in-out infinite;
+    transition: background 0.5s ease, opacity 0.5s ease;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(0.95); opacity: 0.15; }
+    50% { transform: scale(1.05); opacity: 0.25; }
+  }
+
+  .face {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease-out;
+  }
+
+  .eyes {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease;
+  }
+
+  .eye {
+    position: relative;
+    width: 32px;
+    height: 38px;
+    background: var(--eye-color);
+    border-radius: 50%;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+  }
+
+  /* Párpados */
+  .eye::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0%;
+    background: var(--face-color);
+    transition: height 0.12s ease-in-out;
+  }
+
+  .eye.blink::after {
+    height: 100%;
+  }
+
+  .pupil-sparkle {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    width: 10px;
+    height: 10px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.8;
+  }
+
+  .mouth {
+  width: 50px; 
+  height: 10px; 
+  border-radius: 5px 5px 30px 30px; 
+  background: var(--eye-color);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+  .info-panel {
+    text-align: center;
+    z-index: 5;
+  }
+
+  h1.name {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    margin-bottom: 8px;
+    background: linear-gradient(90deg, #fff, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .status-text {
+    font-size: 16px;
+    color: #94a3b8;
+    letter-spacing: 1px;
+    height: 24px;
+    font-weight: 300;
+  }
+
+  /* Visualizador de voz */
+  .voice-waves {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    margin-top: 20px;
+  }
+
+  .voice-waves.active {
+    opacity: 1;
+  }
+
+  .wave {
+    width: 5px;
+    height: 8px;
+    background: var(--glow-color);
+    border-radius: 4px;
+    transition: height 0.1s ease;
+  }
+
+  /* Controles de demo */
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    max-width: 600px;
+    margin-top: 30px;
+  }
+
+  button {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(5px);
+  }
+
+  button:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.3);
+  }
+
+  button.active {
+    background: var(--glow-color);
+    color: #000;
+    border-color: var(--glow-color);
+    font-weight: 600;
+  }
+
+  /* ---------- ESTADOS ---------- */
+  
+  /* Escuchando */
+  .state-listening { --glow-color: #34d399; }
+  .state-listening .head {
+    border-radius: 50%;
+    transform: scale(1.05);
+    box-shadow: 0 0 50px rgba(52, 211, 153, 0.4), inset -10px -20px 30px rgba(0,0,0,0.1);
+    animation: breathing 2s ease-in-out infinite; 
+  }
+  .state-listening .glow { opacity: 0.3; animation-duration: 1.5s; }
+  .state-listening .eye { height: 42px; width: 36px; } 
+  .state-listening .mouth { width: 24px; height: 18px; border-radius: 50%; } 
+
+  /* Pensando */
+  .state-thinking { --glow-color: #a78bfa; }
+  .state-thinking .eyes { transform: translate(15px, -15px); }
+  .state-thinking .eye:nth-child(1) { height: 30px; }
+  .state-thinking .eye:nth-child(2) { height: 20px; }
+  .state-thinking .mouth { width: 16px; transform: translateX(10px); }
+
+  /* Hablando */
+  .state-speaking { --glow-color: #60a5fa; }
+  .state-speaking .glow { animation: pulse 1s ease-in-out infinite; }
+  
+  /* Sorprendida */
+  .state-surprised { --glow-color: #fde047; }
+  .state-surprised .eye { width: 40px; height: 40px; }
+  .state-surprised .mouth { width: 30px; height: 40px; border-radius: 50%; }
+  .state-surprised .glow { opacity: 0.3; }
+
+  /* Feliz */
+  .state-happy { --glow-color: #f472b6; }
+  .state-happy .mouth { width: 50px; height: 20px; border-radius: 10px 10px 50px 50px; }
+  .state-happy .head { border-radius: 50%; animation-duration: 3s; transform: scale(1.08); }
+
+  /* Triste */
+  .state-sad { --glow-color: #64748b; }
+  .state-sad .eyes { transform: translateY(10px); }
+  .state-sad .eye { 
+  height: 20px;                      
+  border-radius: 15px 15px 50px 50px; /* ← esquinas superiores más cerradas */
+}
+  .state-sad .mouth { width: 30px; height: 7px; border-radius: 50px 50px 10px 10px; transform: translateY(15px); }
+  .state-sad .glow { opacity: 0.05; }
+  .state-sad .head { animation: breathing 6s ease-in-out infinite; transform: scale(0.95); }
+
+  /* Botón de cierre de emergencia */
+  .close-app-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255,255,255,0.5);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 100;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(5px);
+  }
+
+  .close-app-btn:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+  }
+
+  .close-app-btn svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    fill: none;
+  }
+
+  /* Keypad Modal */
+  .keypad-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 200;
+    transition: opacity 0.3s ease;
+  }
+
+  .keypad-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .keypad-container {
+    background: rgba(30, 41, 59, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 30px;
+    width: 280px;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    transform: translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .keypad-overlay.active .keypad-container {
+    transform: translateY(0);
+  }
+
+  .keypad-display {
+    background: rgba(15, 23, 42, 0.6);
+    border-radius: 12px;
+    height: 50px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    letter-spacing: 8px;
+    color: white;
+    font-family: monospace;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .keypad-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+  }
+
+  .keypad-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 500;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin: 0 auto;
+  }
+
+  .keypad-btn:hover, .keypad-btn:active {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(0.95);
+  }
+
+  .keypad-btn.action {
+    background: rgba(239, 68, 68, 0.1);
+    color: #fca5a5;
+    font-size: 14px;
+  }
+
+  .keypad-btn.action:hover {
+    background: rgba(239, 68, 68, 0.3);
+  }
+
+</style>
+</head>
+<body class="state-idle">
+
+<button class="close-app-btn" onclick="openKeypad()" aria-label="Cerrar aplicación">
+  <span style="font-weight: 700; font-size: 16px; letter-spacing: 1px;">RI</span>
+</button>
+
+<div class="keypad-overlay" id="keypadOverlay">
+  <div class="keypad-container">
+    <div style="margin-bottom: 15px; font-size: 14px; color: #94a3b8;">Código de seguridad</div>
+    <div class="keypad-display" id="keypadDisplay"></div>
+    <div class="keypad-grid">
+      <div class="keypad-btn" onclick="addPin('1')">1</div>
+      <div class="keypad-btn" onclick="addPin('2')">2</div>
+      <div class="keypad-btn" onclick="addPin('3')">3</div>
+      <div class="keypad-btn" onclick="addPin('4')">4</div>
+      <div class="keypad-btn" onclick="addPin('5')">5</div>
+      <div class="keypad-btn" onclick="addPin('6')">6</div>
+      <div class="keypad-btn" onclick="addPin('7')">7</div>
+      <div class="keypad-btn" onclick="addPin('8')">8</div>
+      <div class="keypad-btn" onclick="addPin('9')">9</div>
+      <div class="keypad-btn action" onclick="closeKeypad()">X</div>
+      <div class="keypad-btn" onclick="addPin('0')">0</div>
+      <div class="keypad-btn action" onclick="clearPin()">DEL</div>
+    </div>
+  </div>
+</div>
+
+<div class="scene" id="scene">
+  <div class="avatar-container" id="avatar">
+    <div class="glow" id="glow"></div>
+    <div class="head" id="head">
+      <div class="face" id="face">
+        <div class="eyes">
+          <div class="eye" id="eyeL"><div class="pupil-sparkle"></div></div>
+          <div class="eye" id="eyeR"><div class="pupil-sparkle"></div></div>
+        </div>
+        <div class="mouth" id="mouth"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-panel">
+    <h1 class="name">RITA</h1>
+    <div class="status-text" id="statusText">Lista</div>
+    
+    <div class="voice-waves" id="voiceWaves">
+      <div class="wave"></div><div class="wave"></div><div class="wave"></div>
+      <div class="wave"></div><div class="wave"></div><div class="wave"></div>
+      <div class="wave"></div>
+    </div>
+  </div>
+
+  <div class="controls" id="controls">
+    <button onclick="setState('idle')" id="btn-idle" class="active">Reposo</button>
+    <button onclick="setState('listening')" id="btn-listening">Escucha</button>
+    <button onclick="setState('thinking')" id="btn-thinking">Piensa</button>
+    <button onclick="setState('speaking')" id="btn-speaking">Habla</button>
+    <button onclick="setState('happy')" id="btn-happy">Contenta</button>
+    <button onclick="setState('sad')" id="btn-sad">Triste</button>
+    <button onclick="setState('surprised')" id="btn-surprised">Sorprendida</button>
+  </div>
+</div>
+
+<script>
+  const statusText = document.getElementById('statusText');
+  const voiceWaves = document.getElementById('voiceWaves');
+  const waves = document.querySelectorAll('.wave');
+  const face = document.getElementById('face');
+  const eyeL = document.getElementById('eyeL');
+  const eyeR = document.getElementById('eyeR');
+  
+  const states = {
+    idle:      { text: 'Lista',            speaking: false },
+    listening: { text: 'Te escucho...',    speaking: false },
+    thinking:  { text: 'Pensando...',      speaking: false },
+    speaking:  { text: 'Hablando...',      speaking: true  },
+    happy:     { text: '¡Qué bien!',       speaking: false },
+    sad:       { text: 'Oh vaya...',       speaking: false },
+    surprised: { text: '¡Oh!',             speaking: false },
+  };
+
+  let currentState = 'idle';
+  let speakingInterval = null;
+  let isSpeaking = false;
+
+  window.setState = function(state) {
+    currentState = state;
+    document.body.className = `state-${state}`;
+    
+    if (states[state]) {
+      statusText.textContent = states[state].text;
+      
+      voiceWaves.classList.toggle('active', states[state].speaking || state === 'listening');
+      
+      if (states[state].speaking) {
+        startSpeakingAnimation();
+      } else {
+        stopSpeakingAnimation();
+      }
+    }
+
+    document.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+    const btn = document.getElementById(`btn-${state}`);
+    if (btn) btn.classList.add('active');
+  }
+
+  // Animación de hablar (modifica boca y ondas)
+  function startSpeakingAnimation() {
+    if (isSpeaking) return;
+    isSpeaking = true;
+    
+    speakingInterval = setInterval(() => {
+      const mouth = document.getElementById('mouth');
+      if (currentState === 'speaking') {
+        const height = 10 + Math.random() * 25;
+        const width = 30 + Math.random() * 15;
+        mouth.style.height = `${height}px`;
+        mouth.style.width = `${width}px`;
+        mouth.style.borderRadius = `${10 + Math.random()*20}px`;
+      }
+      
+      waves.forEach(wave => {
+        wave.style.height = `${8 + Math.random() * 28}px`;
+      });
+    }, 120);
+  }
+
+  function stopSpeakingAnimation() {
+    isSpeaking = false;
+    clearInterval(speakingInterval);
+    document.getElementById('mouth').style = ''; 
+    
+    if (currentState === 'listening') {
+       startListeningWaves();
+    } else {
+       waves.forEach(wave => wave.style.height = '8px');
+    }
+  }
+
+  // Animación suave de ondas cuando escucha
+  let listeningInterval;
+  function startListeningWaves() {
+    clearInterval(listeningInterval);
+    listeningInterval = setInterval(() => {
+      if(currentState !== 'listening') {
+         clearInterval(listeningInterval);
+         return;
+      }
+      waves.forEach((wave, i) => {
+        const h = 8 + Math.sin(Date.now() / 200 + i) * 12;
+        wave.style.height = `${Math.max(4, h)}px`;
+      });
+    }, 50);
+  }
+
+  // Parpadeo natural
+  function blink() {
+    // Si está feliz o sorprendida, parpadea diferente o no parpadea
+    if (currentState === 'happy' || currentState === 'surprised') {
+      setTimeout(blink, 2000 + Math.random() * 3000);
+      return; 
+    }
+    
+    eyeL.classList.add('blink');
+    eyeR.classList.add('blink');
+    
+    setTimeout(() => {
+      eyeL.classList.remove('blink');
+      eyeR.classList.remove('blink');
+    }, 150);
+    
+    setTimeout(blink, 2500 + Math.random() * 4500);
+  }
+
+  // Seguimiento de cursor
+  document.addEventListener('mousemove', (e) => {
+    if (currentState === 'thinking' || currentState === 'sad') return; // En estos estados ignora
+    
+    const x = (e.clientX / window.innerWidth - 0.5) * 35;
+    const y = (e.clientY / window.innerHeight - 0.5) * 30;
+    
+    face.style.transform = `translate(${x}px, ${y}px)`;
+  });
+
+  document.addEventListener('mouseleave', () => {
+    face.style.transform = `translate(0px, 0px)`;
+  });
+
+  // Iniciar parpadeo
+  setTimeout(blink, 1000);
+
+  // --- Lógica del Teclado Numérico ---
+  let currentPin = '';
+  const keypadOverlay = document.getElementById('keypadOverlay');
+  const keypadDisplay = document.getElementById('keypadDisplay');
+  // Código por defecto para cerrar (puedes cambiarlo)
+  const SECURE_PIN = '0000';
+
+  window.openKeypad = function() {
+    currentPin = '';
+    updateDisplay();
+    keypadOverlay.classList.add('active');
+  }
+
+  window.closeKeypad = function() {
+    keypadOverlay.classList.remove('active');
+    currentPin = '';
+  }
+
+  window.addPin = function(digit) {
+    if (currentPin.length < 4) {
+      currentPin += digit;
+      updateDisplay();
+      
+      if (currentPin.length === 4) {
+        setTimeout(() => {
+          if (currentPin === SECURE_PIN) {
+            alert('Cerrando aplicación...');
+            // Opción a: window.close() si es una ventana popup
+            window.close(); 
+            // Opción b: Enviar evento al sistema host (Android, Electron, iOS)
+            // window.postMessage('closeApp');
+            closeKeypad();
+          } else {
+            // Error visual
+            keypadDisplay.style.color = '#ef4444';
+            setTimeout(() => {
+              currentPin = '';
+              updateDisplay();
+              keypadDisplay.style.color = 'white';
+            }, 600);
+          }
+        }, 150);
+      }
+    }
+  }
+
+  window.clearPin = function() {
+    currentPin = currentPin.slice(0, -1);
+    updateDisplay();
+  }
+
+  function updateDisplay() {
+    keypadDisplay.textContent = '•'.repeat(currentPin.length);
+  }
+
+</script>
+</body>
+</html>

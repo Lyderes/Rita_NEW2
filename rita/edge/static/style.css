@@ -1,0 +1,468 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #0b1120; /* Tono base azul noche profundo */
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Degradado radial azulado y suave */
+.grid-bg {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle at center, #1e293b 0%, #0b1120 100%);
+    z-index: 0;
+}
+
+/* Lienzo matemático para las ondas 3D glow */
+#waves-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 1;
+}
+
+/* Cabecera superior */
+.status-bar {
+    position: absolute;
+    top: 0; left: 0; width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 30px 40px;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.left-status {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.time {
+    font-size: 34px;
+    font-weight: 500;
+    margin-bottom: 5px;
+    letter-spacing: 0.5px;
+    color: #f0f0f0;
+}
+
+.weather {
+    font-size: 18px;
+    color: #a0a0a0;
+    font-weight: 300;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.right-status {
+    display: flex;
+    align-items: flex-start;
+    gap: 25px;
+    pointer-events: auto; /* Clickable para la salida secreta */
+}
+
+.battery-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+    color: #a0a0a0;
+    margin-top: 5px;
+}
+
+.bat-text {
+    font-size: 15px;
+}
+
+/* El logo de RITA como botón secreto de PIN numpad */
+.r-logo {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 50px;
+    color: #38bdf8;
+    text-shadow: 0 0 25px rgba(56, 189, 248, 0.8);
+    cursor: pointer;
+    line-height: 0.8;
+}
+
+/* Centro: Logo y Estado de RITA */
+.center-identity {
+    position: absolute;
+    top: 10%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10;
+}
+
+.rita-box {
+    display: flex;
+    align-items: center;
+    border: 2px solid #38bdf8;
+    border-radius: 15px;
+    padding: 10px 45px;
+    box-shadow: 0 0 30px rgba(56, 189, 248, 0.2), inset 0 0 20px rgba(56, 189, 248, 0.1);
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    margin-bottom: 12px;
+}
+
+.rita-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 68px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    color: #ffffff;
+    margin: 0 25px;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+}
+
+.icon-left, .icon-right {
+    color: #38bdf8;
+    font-size: 22px;
+    text-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
+}
+
+.state-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 5px;
+    color: #38bdf8;
+    text-transform: uppercase;
+    text-shadow: 0 0 15px rgba(56, 189, 248, 0.9);
+    transition: all 0.3s;
+}
+
+/* Área inferior interactiva */
+.bottom-area {
+    position: absolute;
+    bottom: 5%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10;
+}
+
+.help-text {
+    font-size: 22px;
+    font-weight: 300;
+    color: #777777;
+    margin-bottom: 25px;
+}
+
+.transcript-container {
+    width: 90%;
+    min-height: 100px;
+    text-align: center;
+    margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.user-text {
+    font-size: 42px;
+    font-weight: 500;
+    color: #ffffff;
+    max-width: 90%;
+    margin-bottom: 10px;
+    line-height: 1.2;
+    /* Cursor rojo de sistema CLI parpadeando */
+    border-right: 4px solid #38bdf8;
+    padding-right: 8px;
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes blink { 50% { border-color: transparent; } }
+
+.rita-text {
+    font-size: 26px;
+    font-weight: 400;
+    color: #7dd3fc;
+    max-width: 80%;
+    font-style: italic;
+    min-height: 35px;
+    text-shadow: 0 0 10px rgba(125, 211, 252, 0.3);
+}
+
+/* Action Buttons (Pill design from mockup) */
+.action-buttons {
+    display: flex;
+    gap: 25px;
+    justify-content: center;
+}
+
+.action-btn {
+    background: rgba(0,0,0,0.4);
+    border: 1.5px solid #38bdf8;
+    border-radius: 30px;
+    padding: 12px 28px;
+    color: #dddddd;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.15);
+    backdrop-filter: blur(5px);
+}
+
+.action-btn i {
+    color: #38bdf8;
+    font-size: 18px;
+    text-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+}
+
+/* Numpad Oculto Funcional Súper Moderno */
+.hidden {
+    display: none !important;
+}
+
+#numpad-modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(5, 3, 2, 0.95);
+    backdrop-filter: blur(15px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.numpad-container {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid #38bdf8;
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 0 50px rgba(56, 189, 248, 0.2);
+}
+
+.numpad-container h2 {
+    color: #38bdf8;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+}
+
+#pin-display {
+    font-family: 'Orbitron', monospace;
+    font-size: 48px;
+    color: #fff;
+    letter-spacing: 15px;
+    margin-bottom: 30px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    min-height: 60px;
+    border-bottom: 2px solid #38bdf8;
+}
+
+.numpad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.num-key {
+    background: transparent;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    color: #fff;
+    font-size: 32px;
+    font-family: 'Inter', sans-serif;
+    padding: 20px;
+    border-radius: 50%;
+    width: 90px;
+    height: 90px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.num-key:active {
+    background: rgba(56, 189, 248, 0.3);
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.6);
+}
+
+.action-clear, .action-cancel {
+    font-size: 20px;
+    font-weight: 600;
+    color: #7dd3fc;
+}
+
+/* --- FACE AVATAR CSS --- */
+:root {
+  --face-color: #f1f5f9;
+  --eye-color: #0b1120; /* Match new background */
+  --glow-color: #38bdf8;
+}
+
+body.state-idle { --glow-color: #38bdf8; }
+body.state-listening { --glow-color: #34d399; }
+body.state-thinking { --glow-color: #a78bfa; }
+body.state-speaking { --glow-color: #60a5fa; }
+body.state-sad { --glow-color: #64748b; }
+body.state-happy { --glow-color: #f472b6; }
+body.state-surprised { --glow-color: #fde047; }
+
+.scene {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  justify-content: center;
+}
+
+.avatar-container {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  margin-bottom: 20px;
+}
+
+.head {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: var(--face-color);
+  border-radius: 45% 55% 40% 60% / 55% 45% 60% 40%;
+  box-shadow: 
+    0 0 40px rgba(255, 102, 0, 0.4),
+    inset -10px -20px 30px rgba(0,0,0,0.1),
+    inset 10px 10px 20px rgba(255,255,255,0.8);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: organic-float 6s ease-in-out infinite, breathing 4s ease-in-out infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+}
+
+@keyframes organic-float {
+  0%, 100% { border-radius: 45% 55% 40% 60% / 55% 45% 60% 40%; transform: translateX(0px) rotate(0deg); }
+  33% { border-radius: 55% 45% 60% 40% / 40% 60% 45% 55%; transform: translateX(20px) rotate(4deg); }
+  66% { border-radius: 40% 60% 50% 50% / 60% 40% 55% 45%; transform: translateX(-20px) rotate(-4deg); }
+}
+
+@keyframes breathing {
+  0%, 100% { transform: scale(1) translateY(0); }
+  50% { transform: scale(1.02) translateY(-5px); }
+}
+
+.glow {
+  position: absolute;
+  width: 120%;
+  height: 120%;
+  top: -10%;
+  left: -10%;
+  background: radial-gradient(circle, var(--glow-color) 0%, transparent 60%);
+  opacity: 0.2;
+  z-index: 1;
+  border-radius: 50%;
+  animation: pulse 3s ease-in-out infinite;
+  transition: background 0.5s ease, opacity 0.5s ease;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(0.95); opacity: 0.15; }
+  50% { transform: scale(1.05); opacity: 0.3; }
+}
+
+.face {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease-out;
+}
+
+.eyes {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 20px;
+  transition: transform 0.3s ease;
+}
+
+.eye {
+  position: relative;
+  width: 32px;
+  height: 38px;
+  background: var(--eye-color);
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.eye::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0%;
+  background: var(--face-color);
+  transition: height 0.12s ease-in-out;
+}
+
+.eye.blink::after { height: 100%; }
+
+.pupil-sparkle {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  width: 10px;
+  height: 10px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.8;
+}
+
+.mouth {
+  width: 50px; 
+  height: 10px; 
+  border-radius: 5px 5px 30px 30px; 
+  background: var(--eye-color);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ESTADOS AVATAR */
+.state-listening .head {
+  border-radius: 50%;
+  transform: scale(1.05);
+  box-shadow: 0 0 50px rgba(52, 211, 153, 0.5), inset -10px -20px 30px rgba(0,0,0,0.1);
+  animation: breathing 2s ease-in-out infinite; 
+}
+.state-listening .glow { opacity: 0.4; animation-duration: 1.5s; background: radial-gradient(circle, #34d399 0%, transparent 60%); }
+.state-listening .eye { height: 42px; width: 36px; } 
+.state-listening .mouth { width: 24px; height: 18px; border-radius: 50%; } 
+
+.state-thinking .glow { background: radial-gradient(circle, #a78bfa 0%, transparent 60%); }
+.state-thinking .eyes { transform: translate(15px, -15px); }
+.state-thinking .eye:nth-child(1) { height: 30px; }
+.state-thinking .eye:nth-child(2) { height: 20px; }
+.state-thinking .mouth { width: 16px; transform: translateX(10px); }
+
+.state-speaking .glow { animation: pulse 1s ease-in-out infinite; background: radial-gradient(circle, #60a5fa 0%, transparent 60%); }
+
+.state-sad .glow { opacity: 0.05; background: radial-gradient(circle, #64748b 0%, transparent 60%); }

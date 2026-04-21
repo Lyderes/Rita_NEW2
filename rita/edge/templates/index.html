@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RITA - AI Interface</title>
+    <!-- Modern high-end fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- Subtle Grid Background -->
+    <div class="grid-bg"></div>
+
+    <!-- No canvas waves, only face scene below -->
+
+    <!-- Top Status Bar -->
+    <header class="status-bar">
+        <div class="left-status">
+            <div class="time" id="clock">--:-- --</div>
+            <div class="weather" id="weather">
+                <i class="fas fa-cloud"></i> --°C | ESP
+            </div>
+        </div>
+        
+        <div class="right-status" id="exit-btn">
+            <div class="battery-group">
+                <i class="fas fa-wifi"></i>
+                <span class="bat-text">100%</span>
+                <i class="fas fa-battery-full"></i>
+            </div>
+            <div class="r-logo">Ri</div>
+        </div>
+    </header>
+
+    <!-- Face Avatar -->
+    <main class="center-identity" style="top: 15%; border: none; box-shadow: none; background: transparent;">
+        <div class="scene" id="scene">
+            <div class="avatar-container" id="avatar">
+                <div class="glow" id="glow"></div>
+                <div class="head" id="head">
+                    <div class="face" id="face">
+                        <div class="eyes">
+                            <div class="eye" id="eyeL"><div class="pupil-sparkle"></div></div>
+                            <div class="eye" id="eyeR"><div class="pupil-sparkle"></div></div>
+                        </div>
+                        <div class="mouth" id="mouth"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="info-panel">
+                <div class="state-label" id="state-label" style="margin-top: 10px;">STANDBY</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Interactive Area -->
+    <footer class="bottom-area">
+        <h3 class="help-text">¿Cómo puedo ayudarte hoy?</h3>
+        
+        <div class="transcript-container">
+            <h2 class="user-text" id="user-text"></h2>
+            <p class="rita-text" id="rita-text"></p>
+        </div>
+
+        <nav class="action-buttons">
+            <button class="action-btn"><i class="fas fa-music"></i> Reproducir Música</button>
+            <button class="action-btn"><i class="far fa-clock"></i> Poner Alarma</button>
+            <button class="action-btn"><i class="far fa-envelope"></i> Leer Mensajes</button>
+            <button class="action-btn"><i class="fas fa-cloud-sun"></i> Ver Clima</button>
+        </nav>
+    </footer>
+
+    <!-- Numpad Modal (Oculto) -->
+    <div id="numpad-modal" class="hidden">
+        <div class="numpad-container">
+            <h2>SYSTEM LOCK</h2>
+            <div id="pin-display">----</div>
+            <div class="numpad">
+                <button class="num-key" onclick="pressNum(1)">1</button>
+                <button class="num-key" onclick="pressNum(2)">2</button>
+                <button class="num-key" onclick="pressNum(3)">3</button>
+                <button class="num-key" onclick="pressNum(4)">4</button>
+                <button class="num-key" onclick="pressNum(5)">5</button>
+                <button class="num-key" onclick="pressNum(6)">6</button>
+                <button class="num-key" onclick="pressNum(7)">7</button>
+                <button class="num-key" onclick="pressNum(8)">8</button>
+                <button class="num-key" onclick="pressNum(9)">9</button>
+                <button class="num-key action-clear" onclick="clearPin()">CLR</button>
+                <button class="num-key" onclick="pressNum(0)">0</button>
+                <button class="num-key action-cancel" onclick="hideNumpad()">ESC</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
