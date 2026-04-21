@@ -61,6 +61,24 @@ services:
       retries: 5
       start_period: 20s
 
+  mqtt_consumer:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      mqtt:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+    env_file:
+      - ./backend/.env
+    environment:
+      DATABASE_URL: postgresql+psycopg://postgres:postgres@postgres:5432/rita
+      MQTT_HOST: mqtt
+      MQTT_PORT: "1883"
+    command: ["python", "scripts/run_mqtt_consumer.py"]
+
 volumes:
   postgres_data:
   mosquitto_data:

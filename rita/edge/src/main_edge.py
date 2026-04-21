@@ -46,10 +46,10 @@ class RitaEdgeAssistant:
             self._update_ui(status="esperando")
 
     def _on_motion(self):
-        self.mqtt.publish("rita/events/motion", {"device_code": self.config.backend_device_code})
+        self.mqtt.publish("rita/events/motion", {"event_type": "possible_fall", "device_code": self.config.backend_device_code})
 
     def _on_noise(self):
-        self.mqtt.publish("rita/events/noise", {"device_code": self.config.backend_device_code})
+        self.mqtt.publish("rita/events/noise", {"event_type": "health_concern", "device_code": self.config.backend_device_code})
 
     def run(self):
         self.mqtt.connect()
@@ -71,7 +71,7 @@ class RitaEdgeAssistant:
                         self.tts.speak("Hasta luego."); self.modo_conversacion = False
                         self._update_ui(status="esperando", user="")
                         continue
-                    self.mqtt.publish("rita/events/speech", {"text": text, "device_code": self.config.backend_device_code})
+                    self.mqtt.publish("rita/events/speech", {"event_type": "user_speech", "user_text": text, "device_code": self.config.backend_device_code})
                     if not self.mqtt.is_connected():
                         self.tts.speak("Sin conexión, lo he guardado.")
                 else:
