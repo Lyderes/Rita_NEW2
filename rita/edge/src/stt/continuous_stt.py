@@ -63,13 +63,22 @@ class ContinuousSTT:
     def _callback(self, indata, frames, time, status):
         if status:
             logger.debug(f"Audio status: {status}")
-        self.q.put(bytes(indata))
+        if not getattr(self, 'paused', False):
+            self.q.put(bytes(indata))
 
     def clear_buffer(self):
         """Vacía la cola para no procesar audio antiguo."""
         with self.q.mutex:
             self.q.queue.clear()
         self.needs_reset = True
+
+    def pause(self):
+        self.paused = True
+        self.clear_buffer()
+
+    def resume(self):
+        self.clear_buffer()
+        self.paused = False
 
     def listen(self) -> Generator[Optional[str], None, None]:
         """Generador que produce texto transcrito de forma continua."""

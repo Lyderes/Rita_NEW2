@@ -42,7 +42,9 @@ class RitaEdgeAssistant:
         text = data.get("text", "") if isinstance(data, dict) else data
         if text:
             self._update_ui(status="hablando", rita=text)
+            self.stt.pause()
             self.tts.speak(text)
+            self.stt.resume()
             self._update_ui(status="esperando")
 
     def _on_motion(self):
@@ -64,16 +66,23 @@ class RitaEdgeAssistant:
                     if not self.modo_conversacion:
                         if any(w in t for w in ["rita", "ayuda", "hola"]):
                             self.modo_conversacion = True
+                            self.stt.pause()
                             self.tts.speak("Dime, te escucho.")
+                            self.stt.resume()
                             self._update_ui(status="esperando", user="¿Dime?")
                         continue
                     if any(w in t for w in ["adiós", "adios", "salir"]):
-                        self.tts.speak("Hasta luego."); self.modo_conversacion = False
+                        self.stt.pause()
+                        self.tts.speak("Hasta luego.")
+                        self.stt.resume()
+                        self.modo_conversacion = False
                         self._update_ui(status="esperando", user="")
                         continue
                     self.mqtt.publish("rita/events/speech", {"event_type": "user_speech", "user_text": text, "device_code": self.config.backend_device_code})
                     if not self.mqtt.is_connected():
+                        self.stt.pause()
                         self.tts.speak("Sin conexión, lo he guardado.")
+                        self.stt.resume()
                 else:
                     self._update_ui(status="esperando")
         finally: self.cleanup()
