@@ -1,0 +1,8 @@
+requests>=2.32.3
+PyYAML>=6.0.2
+vosk>=0.3.45
+sounddevice>=0.5.1
+numpy>=2.2.0
+pyttsx3>=2.98
+pytest>=8.3.4
+llama-cpp-python[server]

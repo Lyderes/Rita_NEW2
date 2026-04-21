@@ -1,0 +1,31 @@
+Path: /openapi.json | Methods: {'GET', 'HEAD'} | Name: openapi
+Path: /docs | Methods: {'GET', 'HEAD'} | Name: swagger_ui_html
+Path: /docs/oauth2-redirect | Methods: {'GET', 'HEAD'} | Name: swagger_ui_redirect
+Path: /redoc | Methods: {'GET', 'HEAD'} | Name: redoc_html
+Path: /health | Methods: {'GET'} | Name: health
+Path: /auth/login | Methods: {'POST'} | Name: login
+Path: /auth/register | Methods: {'POST'} | Name: register
+Path: /dashboard | Methods: {'GET'} | Name: get_dashboard
+Path: /users | Methods: {'POST'} | Name: create_user
+Path: /users | Methods: {'GET'} | Name: list_users
+Path: /users/{user_id}/status | Methods: {'GET'} | Name: get_user_status
+Path: /users/{user_id}/timeline | Methods: {'GET'} | Name: get_user_timeline
+Path: /users/{user_id}/overview | Methods: {'GET'} | Name: get_user_overview
+Path: /users/{user_id} | Methods: {'DELETE'} | Name: delete_user_gdpr
+Path: /devices | Methods: {'POST'} | Name: create_device
+Path: /devices | Methods: {'GET'} | Name: list_devices
+Path: /devices/status | Methods: {'GET'} | Name: list_devices_status
+Path: /devices/{device_code}/heartbeat | Methods: {'POST'} | Name: device_heartbeat
+Path: /devices/{device_code}/rotate-token | Methods: {'POST'} | Name: rotate_device_token
+Path: /events | Methods: {'POST'} | Name: create_event
+Path: /events | Methods: {'GET'} | Name: list_events
+Path: /events/checkin | Methods: {'POST'} | Name: simulate_checkin
+Path: /incidents | Methods: {'GET'} | Name: list_incidents
+Path: /incidents/{incident_id} | Methods: {'GET'} | Name: get_incident
+Path: /incidents/{incident_id}/close | Methods: {'PATCH'} | Name: close_incident
+Path: /alerts | Methods: {'GET'} | Name: list_alerts
+Path: /alerts/{alert_id} | Methods: {'GET'} | Name: get_alert
+Path: /alerts/{alert_id}/acknowledge | Methods: {'PATCH'} | Name: acknowledge_alert
+Path: /alerts/{alert_id}/resolve | Methods: {'PATCH'} | Name: resolve_alert
+Path: /metrics/summary | Methods: {'GET'} | Name: metrics_summary
+Path: / | Methods: {'GET'} | Name: root

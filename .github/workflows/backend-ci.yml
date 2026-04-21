@@ -1,0 +1,58 @@
+name: Backend CI
+
+on:
+  push:
+    branches:
+      - main
+      - feature/**
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  backend-quality:
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+      DATABASE_URL: 'sqlite:///./rita.db'
+      FRONTEND_PASSWORD: 'admin123'
+      JWT_SECRET: 'rita-local-secret-key-change-me-2026'
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install backend dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Run Ruff
+        env:
+          PYTHONPATH: .
+        run: python -m ruff check app tests
+
+      - name: Run pytest
+        env:
+          PYTHONPATH: .
+        run: python -m pytest tests -q
+
+      # En CI el runner parte de una SQLite vacia; aplicamos migraciones antes del check
+      # para validar el estado real del esquema ya migrado, igual que en el test local.
+      - name: Apply Alembic migrations
+        env:
+          PYTHONPATH: .
+        run: python -m alembic upgrade head
+
+      - name: Run Alembic check
+        env:
+          PYTHONPATH: .
+        run: python -m alembic check

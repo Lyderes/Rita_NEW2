@@ -1,0 +1,17 @@
+llm:
+  base_url: "http://localhost:8001"
+  chat_endpoint: "/v1/chat/completions"
+  model: "model"
+  timeout_s: 20
+  temperature: 0.2
+  max_tokens: 64
+
+backend:
+  base_url: "http://localhost:8000"
+  device_code: "rita-edge-001"
+  device_token: ""
+  timeout_s: 3
+  retry_on_startup: true
+  heartbeat_on_startup: true
+  heartbeat_after_turn: true
+  heartbeat_timeout_s: 3

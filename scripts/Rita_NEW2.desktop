@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=RITA_NEW2
+Comment=Asistente Inteligente RITA Unificado
+Exec=/bin/bash /home/pi/Rita_NEW2/scripts/launch_rita_new2.sh
+Icon=/home/pi/Rita_NEW2/rita/static/icon.png
+Terminal=false
+Categories=Utility;
+Path=/home/pi/Rita_NEW2
