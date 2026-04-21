@@ -1,26 +1,30 @@
 #!/bin/bash
-# Script interno de lanzamiento para autoarranque de Rita_NEW2
-# Inicia la infraestructura, el backend y abre el dashboard en modo Kiosko.
-
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+# 1. LIMPIEZA: Matamos cualquier proceso viejo de Rita para liberar los sensores
+echo "[AUTOSTART] Limpiando procesos antiguos..."
+sudo pkill -9 python3
+sudo pkill -9 chromium
+sleep 2
+
+# 2. Iniciar Servidor de Imagen (La pantalla negra)
+echo "[AUTOSTART] Iniciando servidor de imagen..."
 source "$PROJECT_DIR/.venv/bin/activate"
+python3 "$PROJECT_DIR/rita/edge/src/ui_server.py" &
+sleep 3
 
-# 1. Iniciar todo el sistema (Docker + Backend + Edge)
-# Usamos el script que ya creamos
+# 3. Iniciar el Cerebro de Rita (Voz y Sensores)
+echo "[AUTOSTART] Iniciando voz y sensores..."
 bash "$PROJECT_DIR/scripts/start-rita.sh" &
+sleep 5
 
-# 2. Esperar a que el Dashboard Flutter Web esté listo (puerto 5190)
-echo "[AUTOSTART] Esperando al Dashboard..."
-until curl -s http://localhost:5190 > /dev/null; do
-    sleep 2
-done
+# 4. Abrir la Pantalla en modo Kiosko (Comando corregido para tu Pi)
+URL="http://localhost:5000"
+echo "[AUTOSTART] Abriendo interfaz local..."
 
-# 3. Abrir Chromium en modo Kiosko apuntando al Dashboard
-# Usamos autologin para que no pida clave al arrancar en la Pi
-URL="http://localhost:5190/#/autologin"
-
-if command -v chromium-browser &> /dev/null; then
-    chromium-browser --noerrdialogs --disable-infobars --kiosk "$URL"
-else
+# Intentamos primero con 'chromium' y si falla con 'chromium-browser'
+if command -v chromium &> /dev/null; then
     chromium --noerrdialogs --disable-infobars --kiosk "$URL"
+else
+    chromium-browser --noerrdialogs --disable-infobars --kiosk "$URL"
 fi

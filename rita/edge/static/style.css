@@ -1,0 +1,310 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #080402; /* Negro con toque ínfimo naranja */
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Grid sutil de fondo imitando la imagen de referencia */
+.grid-bg {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-size: 60px 60px;
+    background-image: 
+        linear-gradient(to right, rgba(255, 100, 0, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 100, 0, 0.04) 1px, transparent 1px);
+    z-index: 0;
+}
+
+/* Lienzo matemático para las ondas 3D glow */
+#waves-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 1;
+}
+
+/* Cabecera superior */
+.status-bar {
+    position: absolute;
+    top: 0; left: 0; width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 30px 40px;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.left-status {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.time {
+    font-size: 34px;
+    font-weight: 500;
+    margin-bottom: 5px;
+    letter-spacing: 0.5px;
+    color: #f0f0f0;
+}
+
+.weather {
+    font-size: 18px;
+    color: #a0a0a0;
+    font-weight: 300;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.right-status {
+    display: flex;
+    align-items: flex-start;
+    gap: 25px;
+    pointer-events: auto; /* Clickable para la salida secreta */
+}
+
+.battery-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+    color: #a0a0a0;
+    margin-top: 5px;
+}
+
+.bat-text {
+    font-size: 15px;
+}
+
+/* El logo de RITA como botón secreto de PIN numpad */
+.r-logo {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 50px;
+    color: #ff6600;
+    text-shadow: 0 0 25px rgba(255, 102, 0, 0.8);
+    cursor: pointer;
+    line-height: 0.8;
+}
+
+/* Centro: Logo y Estado de RITA */
+.center-identity {
+    position: absolute;
+    top: 10%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10;
+}
+
+.rita-box {
+    display: flex;
+    align-items: center;
+    border: 2px solid #ff6600;
+    border-radius: 15px;
+    padding: 10px 45px;
+    box-shadow: 0 0 30px rgba(255, 102, 0, 0.2), inset 0 0 20px rgba(255, 102, 0, 0.1);
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    margin-bottom: 12px;
+}
+
+.rita-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 68px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    color: #ffffff;
+    margin: 0 25px;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+}
+
+.icon-left, .icon-right {
+    color: #ff6600;
+    font-size: 22px;
+    text-shadow: 0 0 10px rgba(255, 102, 0, 0.8);
+}
+
+.state-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 5px;
+    color: #ff6600;
+    text-transform: uppercase;
+    text-shadow: 0 0 15px rgba(255, 102, 0, 0.9);
+    transition: all 0.3s;
+}
+
+/* Área inferior interactiva */
+.bottom-area {
+    position: absolute;
+    bottom: 5%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10;
+}
+
+.help-text {
+    font-size: 22px;
+    font-weight: 300;
+    color: #777777;
+    margin-bottom: 25px;
+}
+
+.transcript-container {
+    width: 90%;
+    min-height: 100px;
+    text-align: center;
+    margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.user-text {
+    font-size: 42px;
+    font-weight: 500;
+    color: #ffffff;
+    max-width: 90%;
+    margin-bottom: 10px;
+    line-height: 1.2;
+    /* Cursor rojo de sistema CLI parpadeando */
+    border-right: 4px solid #ff6600;
+    padding-right: 8px;
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes blink { 50% { border-color: transparent; } }
+
+.rita-text {
+    font-size: 26px;
+    font-weight: 400;
+    color: #ffaa66;
+    max-width: 80%;
+    font-style: italic;
+    min-height: 35px;
+    text-shadow: 0 0 10px rgba(255, 170, 102, 0.3);
+}
+
+/* Action Buttons (Pill design from mockup) */
+.action-buttons {
+    display: flex;
+    gap: 25px;
+    justify-content: center;
+}
+
+.action-btn {
+    background: rgba(0,0,0,0.4);
+    border: 1.5px solid #ff6600;
+    border-radius: 30px;
+    padding: 12px 28px;
+    color: #dddddd;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px rgba(255, 102, 0, 0.15);
+    backdrop-filter: blur(5px);
+}
+
+.action-btn i {
+    color: #ff6600;
+    font-size: 18px;
+    text-shadow: 0 0 8px rgba(255, 102, 0, 0.6);
+}
+
+/* Numpad Oculto Funcional Súper Moderno */
+.hidden {
+    display: none !important;
+}
+
+#numpad-modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(5, 3, 2, 0.95);
+    backdrop-filter: blur(15px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.numpad-container {
+    background: rgba(20, 10, 5, 0.8);
+    border: 1px solid #ff6600;
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 0 50px rgba(255, 102, 0, 0.2);
+}
+
+.numpad-container h2 {
+    color: #ff6600;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+}
+
+#pin-display {
+    font-family: 'Orbitron', monospace;
+    font-size: 48px;
+    color: #fff;
+    letter-spacing: 15px;
+    margin-bottom: 30px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    min-height: 60px;
+    border-bottom: 2px solid #ff6600;
+}
+
+.numpad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.num-key {
+    background: transparent;
+    border: 1px solid rgba(255, 102, 0, 0.4);
+    color: #fff;
+    font-size: 32px;
+    font-family: 'Inter', sans-serif;
+    padding: 20px;
+    border-radius: 50%;
+    width: 90px;
+    height: 90px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.num-key:active {
+    background: rgba(255, 102, 0, 0.3);
+    box-shadow: 0 0 20px rgba(255, 102, 0, 0.6);
+}
+
+.action-clear, .action-cancel {
+    font-size: 20px;
+    font-weight: 600;
+    color: #ffaa66;
+}
