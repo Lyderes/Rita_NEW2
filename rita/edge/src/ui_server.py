@@ -16,6 +16,10 @@ ui_status = {
 def index():
     return render_template('index.html')
 
+@app.route('/rita-simon.html')
+def simon():
+    return render_template('rita-simon.html')
+
 @app.route('/api/status', methods=['GET'])
 def get_status():
     return jsonify(ui_status)
