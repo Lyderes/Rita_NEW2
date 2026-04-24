@@ -8,140 +8,230 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { 
+  body {
     background-color: #0b1120;
     color: #ffffff;
     font-family: 'Inter', sans-serif;
-    display: flex; justify-content: center; align-items: center; 
-    min-height: 100vh; padding: 2rem 1rem;
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; padding: 1rem;
     overflow: hidden;
   }
-  .grid-bg { 
-    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  .grid-bg {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
     background: radial-gradient(circle at center, #1e293b 0%, #0b1120 100%);
     z-index: 0;
   }
-  #app { 
-    position: relative; z-index: 10; 
-    background: #1e293b; /* Fondo solido, sin confusiones de cristal */
-    border: 2px solid #334155; border-radius: 24px; padding: 2rem; 
-    max-width: 440px; width: 100%; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); 
-  }
-  h1 { text-align: center; font-size: 26px; font-weight: 700; color: #f8fafc; margin-bottom: 8px; }
-  .subtitle { text-align: center; font-size: 16px; color: #94a3b8; margin-bottom: 1.5rem; }
-  
   .back-btn {
-    position: absolute; top: 24px; left: 24px; background: #334155;
-    border: none; border-radius: 30px; padding: 12px 24px;
-    color: #f8fafc; font-weight: 600; font-size: 16px;
+    position: fixed; top: 18px; left: 18px; background: #334155;
+    border: none; border-radius: 30px; padding: 10px 20px;
+    color: #f8fafc; font-weight: 600; font-size: 15px;
     cursor: pointer; display: flex; align-items: center; gap: 8px; z-index: 999;
     box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: background 0.2s;
   }
   .back-btn:hover { background: #475569; }
-  .back-btn i { color: #cbd5e1; }
 
-  #stats { display: flex; justify-content: space-around; background: #0f172a; border-radius: 16px; padding: 1rem; margin-bottom: 1.5rem; }
+  /* Layout dos columnas */
+  #layout {
+    position: relative; z-index: 10;
+    display: flex; gap: 20px; align-items: flex-start;
+    width: 100%; max-width: 900px;
+  }
+
+  /* Columna izquierda */
+  #app {
+    background: #1e293b;
+    border: 2px solid #334155; border-radius: 24px; padding: 1.5rem;
+    flex: 0 0 390px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  }
+  h1 { text-align: center; font-size: 22px; font-weight: 700; color: #f8fafc; margin-bottom: 6px; }
+  .subtitle { text-align: center; font-size: 14px; color: #94a3b8; margin-bottom: 1.2rem; }
+
+  #stats { display: flex; justify-content: space-around; background: #0f172a; border-radius: 14px; padding: 0.8rem; margin-bottom: 1.2rem; }
   .stat { text-align: center; }
-  .stat-label { font-size: 13px; color: #94a3b8; font-weight: 600; text-transform: uppercase; margin-bottom: 4px; }
-  .stat-value { font-size: 28px; font-weight: 700; color: #ffffff; }
-  
-  #board { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 1.5rem; }
+  .stat-label { font-size: 11px; color: #94a3b8; font-weight: 600; text-transform: uppercase; margin-bottom: 3px; }
+  .stat-value { font-size: 24px; font-weight: 700; color: #ffffff; }
+
+  #board { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 1.2rem; }
   .btn {
-    height: 140px; border: none; border-radius: 20px;
-    cursor: pointer; transition: transform 0.1s ease; outline: none; 
+    height: 120px; border: none; border-radius: 18px;
+    cursor: pointer; transition: transform 0.1s ease; outline: none;
     box-shadow: 0 6px 0 rgba(0,0,0,0.4), inset 0 2px 5px rgba(255,255,255,0.2);
   }
   .btn:active { box-shadow: 0 2px 0 rgba(0,0,0,0.4); transform: translateY(4px); }
-  
   .btn.dim { filter: brightness(0.6) saturate(0.8); }
   .btn.lit { filter: brightness(1.3) saturate(1.1); transform: scale(0.97); box-shadow: 0 2px 0 rgba(0,0,0,0.4), 0 0 20px rgba(255,255,255,0.4); }
-  
+
   #b-red    { background: #ef4444; }
   #b-green  { background: #22c55e; }
   #b-blue   { background: #3b82f6; }
   #b-yellow { background: #eab308; }
 
   #msg-box {
-    min-height: 60px; display: flex; align-items: center; justify-content: center;
-    border-radius: 12px; padding: 0.5rem 1rem; margin-bottom: 1.5rem;
+    min-height: 52px; display: flex; align-items: center; justify-content: center;
+    border-radius: 12px; padding: 0.5rem 1rem; margin-bottom: 1.2rem;
     background: #0f172a; border: 2px solid #334155;
   }
-  #msg { font-size: 18px; font-weight: 600; color: #e2e8f0; text-align: center; }
+  #msg { font-size: 16px; font-weight: 600; color: #e2e8f0; text-align: center; }
   #msg.ok   { color: #4ade80; }
   #msg.fail { color: #f87171; }
   #msg.watch{ color: #60a5fa; }
-  
+
   #start {
-    width: 100%; padding: 18px; font-size: 20px; font-weight: 700;
-    background: #3b82f6; color: #ffffff; border: none; border-radius: 16px;
+    width: 100%; padding: 15px; font-size: 18px; font-weight: 700;
+    background: #3b82f6; color: #ffffff; border: none; border-radius: 14px;
     cursor: pointer; transition: background 0.2s;
     box-shadow: 0 4px 0 #2563eb;
   }
   #start:hover { background: #60a5fa; box-shadow: 0 4px 0 #3b82f6; }
   #start:disabled { background: #475569; box-shadow: 0 4px 0 #334155; color: #94a3b8; cursor: not-allowed; }
-  
-  #history { margin-top: 1.5rem; display: none; }
-  #history h3 { font-size: 14px; color: #94a3b8; margin-bottom: 10px; font-weight: 600; }
-  #dots { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  #history { margin-top: 1.2rem; display: none; }
+  #history h3 { font-size: 13px; color: #94a3b8; margin-bottom: 8px; font-weight: 600; }
+  #dots { display: flex; flex-wrap: wrap; gap: 7px; }
   .dot {
-    width: 36px; height: 36px; border-radius: 50%;
-    font-size: 14px; font-weight: 700; color: #ffffff;
+    width: 32px; height: 32px; border-radius: 50%;
+    font-size: 12px; font-weight: 700; color: #ffffff;
     display: flex; align-items: center; justify-content: center;
   }
   .dot.ok   { background: #22c55e; }
   .dot.fail { background: #ef4444; }
-  
-  #metrics { margin-top: 1.5rem; display: none; background: #0f172a; border-radius: 16px; padding: 1.25rem; border: 2px solid #334155; }
-  #metrics h3 { font-size: 14px; color: #60a5fa; margin-bottom: 15px; font-weight: 700; }
-  .mrow { display: flex; justify-content: space-between; font-size: 15px; padding: 8px 0; border-bottom: 1px solid #334155; }
-  .mrow:last-child { border-bottom: none; }
-  .mkey { color: #cbd5e1; }
-  .mval { font-weight: 700; color: #f8fafc; }
+
+  /* ── Columna derecha: panel para el cuidador ── */
+  #report-panel {
+    flex: 1;
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+  }
+  #report-panel.visible { display: flex; }
+
+  /* Tarjeta de resumen principal */
+  .summary-card {
+    border-radius: 20px; padding: 1.4rem;
+    border: 2px solid transparent;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  }
+  .summary-card.green  { background: #052e16; border-color: #16a34a; }
+  .summary-card.yellow { background: #1c1200; border-color: #ca8a04; }
+  .summary-card.red    { background: #1f0707; border-color: #dc2626; }
+
+  .summary-emoji { font-size: 40px; margin-bottom: 8px; }
+  .summary-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .summary-card.green  .summary-title { color: #4ade80; }
+  .summary-card.yellow .summary-title { color: #fbbf24; }
+  .summary-card.red    .summary-title { color: #f87171; }
+  .summary-desc { font-size: 14px; color: #cbd5e1; line-height: 1.5; }
+
+  /* Tarjetas de detalle individuales */
+  .detail-card {
+    background: #1e293b; border: 2px solid #334155;
+    border-radius: 16px; padding: 1rem 1.2rem;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .detail-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .detail-icon.green  { background: #052e16; }
+  .detail-icon.yellow { background: #1c1200; }
+  .detail-icon.red    { background: #1f0707; }
+  .detail-text { flex: 1; }
+  .detail-label { font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; margin-bottom: 2px; }
+  .detail-value { font-size: 15px; font-weight: 600; color: #f1f5f9; }
+
+  .panel-title {
+    font-size: 13px; color: #475569; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    padding-left: 4px;
+  }
 </style>
 </head>
 <body>
 <div class="grid-bg"></div>
 <button class="back-btn" onclick="window.location.href='/'"><i class="fas fa-arrow-left"></i> Volver a RITA</button>
-<div id="app">
-  <h1><i class="fas fa-brain" style="margin-right: 10px;"></i>RITA MEMORIA</h1>
-  <p class="subtitle">Repite la secuencia de láseres</p>
 
-  <div id="stats">
-    <div class="stat"><div class="stat-label">Nivel</div><div class="stat-value" id="s-level">—</div></div>
-    <div class="stat"><div class="stat-label">Mejor</div><div class="stat-value" id="s-best">—</div></div>
-    <div class="stat"><div class="stat-label">Partidas</div><div class="stat-value" id="s-games">0</div></div>
+<div id="layout">
+  <!-- Columna izquierda: tablero -->
+  <div id="app">
+    <h1><i class="fas fa-brain" style="margin-right:8px;"></i>RITA MEMORIA</h1>
+    <p class="subtitle">Repite la secuencia de colores</p>
+
+    <div id="stats">
+      <div class="stat"><div class="stat-label">Nivel</div><div class="stat-value" id="s-level">—</div></div>
+      <div class="stat"><div class="stat-label">Mejor</div><div class="stat-value" id="s-best">—</div></div>
+      <div class="stat"><div class="stat-label">Partidas</div><div class="stat-value" id="s-games">0</div></div>
+    </div>
+
+    <div id="board">
+      <button class="btn dim" id="b-red"    data-c="red"></button>
+      <button class="btn dim" id="b-green"  data-c="green"></button>
+      <button class="btn dim" id="b-blue"   data-c="blue"></button>
+      <button class="btn dim" id="b-yellow" data-c="yellow"></button>
+    </div>
+
+    <div id="msg-box"><div id="msg">Pulsa "Empezar" cuando estés lista</div></div>
+    <button id="start">Empezar</button>
+
+    <div id="history">
+      <h3>Intentos de hoy</h3>
+      <div id="dots"></div>
+    </div>
   </div>
 
-  <div id="board">
-    <button class="btn dim" id="b-red"    data-c="red"></button>
-    <button class="btn dim" id="b-green"  data-c="green"></button>
-    <button class="btn dim" id="b-blue"   data-c="blue"></button>
-    <button class="btn dim" id="b-yellow" data-c="yellow"></button>
-  </div>
+  <!-- Columna derecha: informe para el cuidador -->
+  <div id="report-panel">
+    <div class="panel-title">¿Cómo ha ido hoy?</div>
 
-  <div id="msg-box"><div id="msg">Pulsa "Empezar" cuando estés lista</div></div>
+    <!-- Tarjeta resumen -->
+    <div class="summary-card" id="summary-card">
+      <div class="summary-emoji" id="summary-emoji">🟢</div>
+      <div class="summary-title" id="summary-title">—</div>
+      <div class="summary-desc"  id="summary-desc">—</div>
+    </div>
 
-  <button id="start">Empezar</button>
+    <!-- Detalles en lenguaje cotidiano -->
+    <div class="detail-card">
+      <div class="detail-icon" id="d1-icon">🧩</div>
+      <div class="detail-text">
+        <div class="detail-label">Memoria</div>
+        <div class="detail-value" id="d-memory">—</div>
+      </div>
+    </div>
 
-  <div id="history">
-    <h3>Intentos de hoy</h3>
-    <div id="dots"></div>
-  </div>
+    <div class="detail-card">
+      <div class="detail-icon" id="d2-icon">⚡</div>
+      <div class="detail-text">
+        <div class="detail-label">Velocidad de reacción</div>
+        <div class="detail-value" id="d-speed">—</div>
+      </div>
+    </div>
 
-  <div id="metrics">
-    <h3>Datos cognitivos de la sesión</h3>
-    <div class="mrow"><span class="mkey">Secuencia máxima</span><span class="mval" id="m-max">—</span></div>
-    <div class="mrow"><span class="mkey">Tiempo medio de respuesta</span><span class="mval" id="m-rt">—</span></div>
-    <div class="mrow"><span class="mkey">Errores cometidos</span><span class="mval" id="m-errors">—</span></div>
-    <div class="mrow"><span class="mkey">Tendencia</span><span class="mval" id="m-trend">—</span></div>
+    <div class="detail-card">
+      <div class="detail-icon" id="d3-icon">🎯</div>
+      <div class="detail-text">
+        <div class="detail-label">Aciertos</div>
+        <div class="detail-value" id="d-acc">—</div>
+      </div>
+    </div>
+
+    <div class="detail-card">
+      <div class="detail-icon" id="d4-icon">📊</div>
+      <div class="detail-text">
+        <div class="detail-label">Constancia</div>
+        <div class="detail-value" id="d-consist">—</div>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
 const COLORS = ['red','green','blue','yellow'];
 let seq = [], pIdx = 0, active = false, waiting = false;
-let level = 0, best = 0, games = 0, errors = 0;
+let level = 0, best = 0, games = 0;
 let rts = [], stepTime = 0, history = [];
+let totalPresses = 0, correctPresses = 0;
 
 const btns = {};
 COLORS.forEach(c => btns[c] = document.getElementById('b-' + c));
@@ -152,11 +242,10 @@ const sBest    = document.getElementById('s-best');
 const sGames   = document.getElementById('s-games');
 const histEl   = document.getElementById('history');
 const dotsEl   = document.getElementById('dots');
-const metricsEl= document.getElementById('metrics');
+const reportPanel = document.getElementById('report-panel');
 
 function setMsg(t, cls) { msgEl.textContent = t; msgEl.className = cls || ''; }
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
 function dimAll() { COLORS.forEach(c => { btns[c].classList.add('dim'); btns[c].classList.remove('lit'); }); }
 function enableAll(yes) { COLORS.forEach(c => btns[c].disabled = !yes); }
 
@@ -188,7 +277,8 @@ async function nextLevel() {
 }
 
 async function startGame() {
-  seq = []; pIdx = 0; level = 0; active = true; rts = []; errors = 0;
+  seq = []; pIdx = 0; level = 0; active = true;
+  rts = []; totalPresses = 0; correctPresses = 0;
   startBtn.disabled = true;
   setMsg('Preparando...', '');
   await sleep(400);
@@ -197,21 +287,27 @@ async function startGame() {
 
 async function onPlayerClick(color) {
   if (!waiting || !active) return;
-  rts.push(Date.now() - stepTime);
+  const rt = Date.now() - stepTime;
+  rts.push(rt);
+  totalPresses++;
   await flashBtn(color, 180);
 
   if (color !== seq[pIdx]) {
-    errors++;
     waiting = false; active = false; enableAll(false); dimAll();
     if (level > best) { best = level; sBest.textContent = best; }
     games++; sGames.textContent = games;
     history.push({ level, ok: false });
     setMsg('¡Vaya! Llegaste al nivel ' + level, 'fail');
-    renderHistory(); updateMetrics();
-    setTimeout(() => { startBtn.disabled = false; startBtn.textContent = 'Intentarlo de nuevo'; setMsg('Pulsa el botón cuando quieras', ''); }, 2000);
+    renderHistory(); updateReport();
+    setTimeout(() => {
+      startBtn.disabled = false;
+      startBtn.textContent = 'Intentarlo de nuevo';
+      setMsg('Pulsa el botón cuando quieras', '');
+    }, 2000);
     return;
   }
 
+  correctPresses++;
   pIdx++;
   stepTime = Date.now();
 
@@ -219,8 +315,101 @@ async function onPlayerClick(color) {
     waiting = false; enableAll(false); dimAll();
     setMsg('¡Perfecto! Nivel ' + level + ' superado', 'ok');
     if (level > best) { best = level; sBest.textContent = best; }
+    history.push({ level, ok: true });
+    renderHistory(); updateReport();
     await sleep(1000);
     if (active) await nextLevel();
+  }
+}
+
+function stdDev(arr) {
+  if (arr.length < 2) return 0;
+  const mean = arr.reduce((a, b) => a + b, 0) / arr.length;
+  return Math.round(Math.sqrt(arr.map(v => (v - mean) ** 2).reduce((a, b) => a + b, 0) / arr.length));
+}
+
+// Devuelve { color, text } según valor y umbrales [bueno, medio]
+function tier(val, lowBetter, threshGood, threshMid) {
+  const good = lowBetter ? val <= threshGood : val >= threshGood;
+  const mid  = lowBetter ? val <= threshMid  : val >= threshMid;
+  if (good) return 'green';
+  if (mid)  return 'yellow';
+  return 'red';
+}
+
+function setDetail(id, iconId, icon, colorCls, text) {
+  document.getElementById(id).textContent = text;
+  const ic = document.getElementById(iconId);
+  ic.textContent = icon;
+  ic.className = 'detail-icon ' + colorCls;
+}
+
+function updateReport() {
+  reportPanel.classList.add('visible');
+
+  const avgRt = rts.length > 0 ? Math.round(rts.reduce((a,b)=>a+b,0)/rts.length) : 0;
+  const sd    = stdDev(rts);
+  const acc   = totalPresses > 0 ? Math.round((correctPresses / totalPresses) * 100) : 0;
+
+  // ── 1. Memoria: nivel máximo alcanzado ──
+  // Referencia: adultos mayores sanos suelen llegar a 5-7
+  let memColor, memText;
+  if (best >= 7)      { memColor = 'green';  memText = `Recordó hasta ${best} pasos — excelente`; }
+  else if (best >= 5) { memColor = 'yellow'; memText = `Recordó hasta ${best} pasos — normal para su edad`; }
+  else                { memColor = 'red';    memText = `Recordó ${best} pasos — por debajo de lo habitual`; }
+  setDetail('d-memory', 'd1-icon', '🧩', memColor, memText);
+
+  // ── 2. Velocidad: TR medio ──
+  let spdColor, spdText;
+  if (avgRt > 0) {
+    if (avgRt < 700)       { spdColor = 'green';  spdText = 'Respondió con rapidez'; }
+    else if (avgRt < 1200) { spdColor = 'yellow'; spdText = 'Respondió a un ritmo normal'; }
+    else                   { spdColor = 'red';    spdText = 'Tardó bastante en responder'; }
+  } else {
+    spdColor = 'yellow'; spdText = 'Sin datos suficientes';
+  }
+  setDetail('d-speed', 'd2-icon', '⚡', spdColor, spdText);
+
+  // ── 3. Aciertos: tasa de precisión ──
+  let accColor, accText;
+  if (acc >= 80)      { accColor = 'green';  accText = `Acertó el ${acc}% de las veces — muy bien`; }
+  else if (acc >= 60) { accColor = 'yellow'; accText = `Acertó el ${acc}% de las veces — aceptable`; }
+  else                { accColor = 'red';    accText = `Solo acertó el ${acc}% — tuvo muchos errores`; }
+  setDetail('d-acc', 'd3-icon', '🎯', accColor, accText);
+
+  // ── 4. Constancia: variabilidad del TR ──
+  // SD alta = respuestas irregulares (distracción o fluctuación cognitiva)
+  let conColor, conText;
+  if (sd < 250)       { conColor = 'green';  conText = 'Respondió de forma constante y regular'; }
+  else if (sd < 500)  { conColor = 'yellow'; conText = 'Algunas respuestas tardaron más que otras'; }
+  else                { conColor = 'red';    conText = 'Respuestas muy irregulares — posible distracción'; }
+  setDetail('d-consist', 'd4-icon', '📊', conColor, conText);
+
+  // ── Resumen global ──
+  const scores = [memColor, spdColor, accColor, conColor];
+  const reds    = scores.filter(s => s === 'red').length;
+  const yellows = scores.filter(s => s === 'yellow').length;
+
+  const card = document.getElementById('summary-card');
+  const emoji = document.getElementById('summary-emoji');
+  const title = document.getElementById('summary-title');
+  const desc  = document.getElementById('summary-desc');
+
+  if (reds === 0 && yellows <= 1) {
+    card.className  = 'summary-card green';
+    emoji.textContent = '😊';
+    title.textContent = '¡Ha ido muy bien hoy!';
+    desc.textContent  = 'Buena memoria, respuestas rápidas y constantes. Sigue así.';
+  } else if (reds >= 2) {
+    card.className  = 'summary-card red';
+    emoji.textContent = '😟';
+    title.textContent = 'Hoy ha sido un día difícil';
+    desc.textContent  = 'Ha tenido bastantes dificultades. Si esto se repite varios días, puede ser bueno comentarlo con su médico.';
+  } else {
+    card.className  = 'summary-card yellow';
+    emoji.textContent = '🙂';
+    title.textContent = 'Ha ido regular, sin preocupación';
+    desc.textContent  = 'Algunas cosas mejor que otras. Es normal que haya días así.';
   }
 }
 
@@ -234,19 +423,6 @@ function renderHistory() {
     d.textContent = h.level;
     dotsEl.appendChild(d);
   });
-}
-
-function updateMetrics() {
-  metricsEl.style.display = 'block';
-  document.getElementById('m-max').textContent = best > 0 ? best : '—';
-  if (rts.length > 0) {
-    const avg = Math.round(rts.reduce((a,b) => a+b, 0) / rts.length);
-    document.getElementById('m-rt').textContent = avg + ' ms';
-  }
-  document.getElementById('m-errors').textContent = errors;
-  const wins = history.filter(h => h.ok).length;
-  const loses = history.filter(h => !h.ok).length;
-  document.getElementById('m-trend').textContent = wins > loses ? '↑ Mejorando' : wins < loses ? '↓ Más errores' : '→ Estable';
 }
 
 COLORS.forEach(c => btns[c].addEventListener('click', () => onPlayerClick(c)));
